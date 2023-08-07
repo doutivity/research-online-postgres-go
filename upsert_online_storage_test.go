@@ -27,3 +27,20 @@ func TestUpsertOnlineStorage(t *testing.T) {
 
 	testOnlineStorage(t, storage)
 }
+
+func BenchmarkUpsertOnlineStorage(b *testing.B) {
+	b.Helper()
+	if testing.Short() {
+		b.Skip()
+	}
+
+	ctx := context.Background()
+
+	connection, err := pgx.Connect(ctx, dataSourceName)
+	require.NoError(b, err)
+	defer connection.Close(ctx)
+
+	storage := NewUpsertOnlineStorage(postgresql.NewSqlcRepository(connection))
+
+	benchmarkOnlineStorage(b, storage)
+}

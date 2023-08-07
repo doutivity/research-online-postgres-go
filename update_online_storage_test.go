@@ -27,3 +27,20 @@ func TestUpdateOnlineStorage(t *testing.T) {
 
 	testOnlineStorage(t, storage)
 }
+
+func BenchmarkUpdateOnlineStorage(b *testing.B) {
+	b.Helper()
+	if testing.Short() {
+		b.Skip()
+	}
+
+	ctx := context.Background()
+
+	connection, err := pgx.Connect(ctx, dataSourceName)
+	require.NoError(b, err)
+	defer connection.Close(ctx)
+
+	storage := NewUpdateOnlineStorage(postgresql.NewSqlcRepository(connection))
+
+	benchmarkOnlineStorage(b, storage)
+}
