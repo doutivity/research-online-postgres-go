@@ -1,12 +1,16 @@
 package main
 
 import (
-	"database/sql"
+	"context"
 	"testing"
+	"time"
+
+	"github.com/doutivity/research-online-postgres-go/internal/storage/postgres/dbs"
 
 	"github.com/stretchr/testify/require"
 
-	_ "github.com/lib/pq"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const (
@@ -14,9 +18,20 @@ const (
 )
 
 func TestPing(t *testing.T) {
-	connection, err := sql.Open("postgres", dataSourceName)
+	connection, err := pgx.Connect(context.Background(), dataSourceName)
 	require.NoError(t, err)
-	defer connection.Close()
+	defer connection.Close(context.Background())
 
-	require.NoError(t, connection.Ping())
+	require.NoError(t, connection.Ping(context.Background()))
+
+	queries := dbs.New(connection)
+	err = queries.UserOnlineNew(context.Background(), dbs.UserOnlineNewParams{
+		UserOnline: 1,
+		Online: pgtype.Timestamptz{
+			Time:             time.Now(),
+			InfinityModifier: 0,
+			Valid:            true,
+		},
+	})
+	require.NoError(t, err)
 }
