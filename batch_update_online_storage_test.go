@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestUpdateOnlineStorage(t *testing.T) {
+func TestBatchUpdateOnlineStorage(t *testing.T) {
 	t.Helper()
 	if testing.Short() {
 		t.Skip()
@@ -23,7 +23,7 @@ func TestUpdateOnlineStorage(t *testing.T) {
 	require.NoError(t, err)
 	defer connection.Close(ctx)
 
-	storage := NewUpdateOnlineStorage(postgresql.NewSqlcRepository(connection))
+	storage := NewBatchUpdateOnlineStorage(postgresql.NewSqlcRepository(connection))
 
 	testOnlineStorage(t, storage)
 }

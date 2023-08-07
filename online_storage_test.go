@@ -18,11 +18,6 @@ func testOnlineStorage(
 	t *testing.T,
 	storage OnlineStorage,
 ) {
-	t.Helper()
-	if testing.Short() {
-		t.Skip()
-	}
-
 	ctx := context.Background()
 
 	connection, err := pgx.Connect(ctx, dataSourceName)

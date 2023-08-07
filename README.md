@@ -59,12 +59,18 @@ FROM (
      ) AS from_t (user_id, online)
 WHERE to_t.user_id = from_t.user_id;
 
+-- version 1
 SELECT *
 FROM unnest(
              ARRAY [9, 10],
              ARRAY ['2023-08-07 15:09:00'::TIMESTAMP, '2023-08-07 15:10:00'::TIMESTAMP]
          ) AS from_t (user_id, online);
 
+-- version 2 supported https://github.com/sqlc-dev/sqlc/issues/958
+SELECT unnest(ARRAY [9, 10])                                                              AS user_id,
+       unnest(ARRAY ['2023-08-07 15:09:00'::TIMESTAMP, '2023-08-07 15:10:00'::TIMESTAMP]) AS online;
+
+-- version 1
 UPDATE user_online AS to_t
 SET online = from_t.online
 FROM unnest(
@@ -73,13 +79,32 @@ FROM unnest(
          ) AS from_t (user_id, online)
 WHERE to_t.user_id = from_t.user_id;
 
+-- version 2
+UPDATE user_online AS to_t
+SET online = from_t.online
+FROM (
+         SELECT unnest(ARRAY [9, 10])                                                              AS user_id,
+                unnest(ARRAY ['2023-08-07 15:09:00'::TIMESTAMP, '2023-08-07 15:10:00'::TIMESTAMP]) AS online
+     ) AS from_t
+WHERE to_t.user_id = from_t.user_id;
 
+-- version 1
 INSERT INTO user_online (user_id, online)
 SELECT user_id, online
 FROM unnest(
              ARRAY [11, 12],
              ARRAY ['2023-08-07 16:11:00'::TIMESTAMP, '2023-08-07 16:12:00'::TIMESTAMP]
          ) AS from_t (user_id, online)
+ON CONFLICT (user_id) DO UPDATE
+    SET online = excluded.online;
+
+-- version 2
+INSERT INTO user_online (user_id, online)
+SELECT user_id, online
+FROM (
+         SELECT unnest(ARRAY [11, 12])                                                             AS user_id,
+                unnest(ARRAY ['2023-08-07 16:11:00'::TIMESTAMP, '2023-08-07 16:12:00'::TIMESTAMP]) AS online
+     ) AS from_t
 ON CONFLICT (user_id) DO UPDATE
     SET online = excluded.online;
 

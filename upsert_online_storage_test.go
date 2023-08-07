@@ -12,6 +12,11 @@ import (
 )
 
 func TestUpsertOnlineStorage(t *testing.T) {
+	t.Helper()
+	if testing.Short() {
+		t.Skip()
+	}
+
 	ctx := context.Background()
 
 	connection, err := pgx.Connect(ctx, dataSourceName)

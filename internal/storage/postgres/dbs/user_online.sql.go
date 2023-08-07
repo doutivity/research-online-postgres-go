@@ -37,6 +37,47 @@ func (q *Queries) UserOnlineAll(ctx context.Context) ([]UserOnline, error) {
 	return items, nil
 }
 
+const userOnlineBatchUpdate = `-- name: UserOnlineBatchUpdate :exec
+UPDATE user_online AS to_t
+SET online = from_t.online
+FROM (
+         SELECT unnest($1::BIGINT[])                  AS user_id,
+                unnest($2::TIMESTAMP WITH TIME ZONE[]) AS online
+     ) AS from_t (user_id, online)
+WHERE to_t.user_id = from_t.user_id
+`
+
+type UserOnlineBatchUpdateParams struct {
+	UserIds []int64
+	Onlines []pgtype.Timestamptz
+}
+
+func (q *Queries) UserOnlineBatchUpdate(ctx context.Context, arg UserOnlineBatchUpdateParams) error {
+	_, err := q.db.Exec(ctx, userOnlineBatchUpdate, arg.UserIds, arg.Onlines)
+	return err
+}
+
+const userOnlineBatchUpsert = `-- name: UserOnlineBatchUpsert :exec
+INSERT INTO user_online (user_id, online)
+SELECT user_id, online
+FROM (
+         SELECT unnest($1::BIGINT[])                  AS user_id,
+                unnest($2::TIMESTAMP WITH TIME ZONE[]) AS online
+     ) AS from_t
+ON CONFLICT (user_id) DO UPDATE
+    SET online = excluded.online
+`
+
+type UserOnlineBatchUpsertParams struct {
+	UserIds []int64
+	Onlines []pgtype.Timestamptz
+}
+
+func (q *Queries) UserOnlineBatchUpsert(ctx context.Context, arg UserOnlineBatchUpsertParams) error {
+	_, err := q.db.Exec(ctx, userOnlineBatchUpsert, arg.UserIds, arg.Onlines)
+	return err
+}
+
 const userOnlineUpdate = `-- name: UserOnlineUpdate :exec
 UPDATE user_online
 SET online = $1
