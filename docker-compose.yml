@@ -1,0 +1,22 @@
+version: "3.7"
+
+services:
+  app:
+    container_name: "research-online-postgres-go-app"
+    image: golang:1.20.0-alpine
+    working_dir: /go/src/github.com/doutivity/research-online-postgres-go
+    volumes:
+      - .:/go/src/github.com/doutivity/research-online-postgres-go
+    command: "sleep 1d"
+    depends_on:
+      - postgres1
+
+  postgres1:
+    container_name: "research-online-postgres-1"
+    image: postgres:15.3
+    environment:
+      POSTGRES_DB: "yaaws"
+      POSTGRES_USER: "yaroslav"
+      POSTGRES_PASSWORD: "AnySecretPassword!!"
+    ports:
+      - "5432:5432"
