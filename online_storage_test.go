@@ -95,7 +95,7 @@ func resetOnline(t *testing.T, ctx context.Context, connection *pgx.Conn, pairs 
 
 	err := repository.WithTransaction(ctx, func(queries *dbs.Queries) error {
 		for _, pair := range pairs {
-			err := queries.UserOnlineNew(ctx, dbs.UserOnlineNewParams{
+			err := queries.UserOnlineUpsert(ctx, dbs.UserOnlineUpsertParams{
 				UserID: pair.UserID,
 				Online: pgtype.Timestamptz{
 					Time:  time.Unix(pair.Timestamp, 0).UTC(),

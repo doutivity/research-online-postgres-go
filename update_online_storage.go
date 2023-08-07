@@ -10,18 +10,18 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type UpsertOnlineStorage struct {
+type UpdateOnlineStorage struct {
 	repository *postgresql.Repository
 }
 
-func NewUpsertOnlineStorage(repository *postgresql.Repository) *UpsertOnlineStorage {
-	return &UpsertOnlineStorage{repository: repository}
+func NewUpdateOnlineStorage(repository *postgresql.Repository) *UpdateOnlineStorage {
+	return &UpdateOnlineStorage{repository: repository}
 }
 
-func (s *UpsertOnlineStorage) BatchStore(ctx context.Context, pairs []UserOnlinePair) error {
+func (s *UpdateOnlineStorage) BatchStore(ctx context.Context, pairs []UserOnlinePair) error {
 	return s.repository.WithTransaction(ctx, func(queries *dbs.Queries) error {
 		for _, pair := range pairs {
-			err := queries.UserOnlineUpsert(ctx, dbs.UserOnlineUpsertParams{
+			err := queries.UserOnlineUpdate(ctx, dbs.UserOnlineUpdateParams{
 				UserID: pair.UserID,
 				Online: pgtype.Timestamptz{
 					Time:  time.Unix(pair.Timestamp, 0).UTC(),

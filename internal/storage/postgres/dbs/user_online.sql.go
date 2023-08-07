@@ -37,19 +37,35 @@ func (q *Queries) UserOnlineAll(ctx context.Context) ([]UserOnline, error) {
 	return items, nil
 }
 
-const userOnlineNew = `-- name: UserOnlineNew :exec
+const userOnlineUpdate = `-- name: UserOnlineUpdate :exec
+UPDATE user_online
+SET online = $1
+WHERE user_id = $2
+`
+
+type UserOnlineUpdateParams struct {
+	Online pgtype.Timestamptz
+	UserID int64
+}
+
+func (q *Queries) UserOnlineUpdate(ctx context.Context, arg UserOnlineUpdateParams) error {
+	_, err := q.db.Exec(ctx, userOnlineUpdate, arg.Online, arg.UserID)
+	return err
+}
+
+const userOnlineUpsert = `-- name: UserOnlineUpsert :exec
 INSERT INTO user_online (user_id, online)
 VALUES ($1, $2)
 ON CONFLICT (user_id) DO UPDATE
     SET online = $2
 `
 
-type UserOnlineNewParams struct {
+type UserOnlineUpsertParams struct {
 	UserID int64
 	Online pgtype.Timestamptz
 }
 
-func (q *Queries) UserOnlineNew(ctx context.Context, arg UserOnlineNewParams) error {
-	_, err := q.db.Exec(ctx, userOnlineNew, arg.UserID, arg.Online)
+func (q *Queries) UserOnlineUpsert(ctx context.Context, arg UserOnlineUpsertParams) error {
+	_, err := q.db.Exec(ctx, userOnlineUpsert, arg.UserID, arg.Online)
 	return err
 }
