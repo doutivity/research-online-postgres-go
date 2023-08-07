@@ -9,6 +9,9 @@ env-down:
 test:
 	docker exec research-online-postgres-go-app go test ./... -v -count=1
 
+bench:
+	docker exec research-online-postgres-go-app go test ./... -v -run=$$^ -bench=. -benchmem -benchtime=1000x
+
 go-test-run:
 	docker exec research-online-postgres-go-app go run main.go
 
