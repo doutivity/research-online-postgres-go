@@ -18,6 +18,10 @@ const (
 )
 
 func TestPing(t *testing.T) {
+	if testing.Short() {
+		t.Skip()
+	}
+
 	connection, err := pgx.Connect(context.Background(), dataSourceName)
 	require.NoError(t, err)
 	defer connection.Close(context.Background())
