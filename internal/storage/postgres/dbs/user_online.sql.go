@@ -11,19 +11,102 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const userOnlineNew = `-- name: UserOnlineNew :exec
+const userOnlineAll = `-- name: UserOnlineAll :many
+SELECT user_id, online
+FROM user_online
+ORDER BY user_id
+`
+
+func (q *Queries) UserOnlineAll(ctx context.Context) ([]UserOnline, error) {
+	rows, err := q.db.Query(ctx, userOnlineAll)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []UserOnline
+	for rows.Next() {
+		var i UserOnline
+		if err := rows.Scan(&i.UserID, &i.Online); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const userOnlineBatchUpdate = `-- name: UserOnlineBatchUpdate :exec
+UPDATE user_online AS to_t
+SET online = from_t.online
+FROM (
+         SELECT unnest($1::BIGINT[])                  AS user_id,
+                unnest($2::TIMESTAMP WITH TIME ZONE[]) AS online
+     ) AS from_t (user_id, online)
+WHERE to_t.user_id = from_t.user_id
+`
+
+type UserOnlineBatchUpdateParams struct {
+	UserIds []int64
+	Onlines []pgtype.Timestamptz
+}
+
+func (q *Queries) UserOnlineBatchUpdate(ctx context.Context, arg UserOnlineBatchUpdateParams) error {
+	_, err := q.db.Exec(ctx, userOnlineBatchUpdate, arg.UserIds, arg.Onlines)
+	return err
+}
+
+const userOnlineBatchUpsert = `-- name: UserOnlineBatchUpsert :exec
+INSERT INTO user_online (user_id, online)
+SELECT user_id, online
+FROM (
+         SELECT unnest($1::BIGINT[])                  AS user_id,
+                unnest($2::TIMESTAMP WITH TIME ZONE[]) AS online
+     ) AS from_t
+ON CONFLICT (user_id) DO UPDATE
+    SET online = excluded.online
+`
+
+type UserOnlineBatchUpsertParams struct {
+	UserIds []int64
+	Onlines []pgtype.Timestamptz
+}
+
+func (q *Queries) UserOnlineBatchUpsert(ctx context.Context, arg UserOnlineBatchUpsertParams) error {
+	_, err := q.db.Exec(ctx, userOnlineBatchUpsert, arg.UserIds, arg.Onlines)
+	return err
+}
+
+const userOnlineUpdate = `-- name: UserOnlineUpdate :exec
+UPDATE user_online
+SET online = $1
+WHERE user_id = $2
+`
+
+type UserOnlineUpdateParams struct {
+	Online pgtype.Timestamptz
+	UserID int64
+}
+
+func (q *Queries) UserOnlineUpdate(ctx context.Context, arg UserOnlineUpdateParams) error {
+	_, err := q.db.Exec(ctx, userOnlineUpdate, arg.Online, arg.UserID)
+	return err
+}
+
+const userOnlineUpsert = `-- name: UserOnlineUpsert :exec
 INSERT INTO user_online (user_id, online)
 VALUES ($1, $2)
 ON CONFLICT (user_id) DO UPDATE
     SET online = $2
 `
 
-type UserOnlineNewParams struct {
-	UserOnline int64
-	Online     pgtype.Timestamptz
+type UserOnlineUpsertParams struct {
+	UserID int64
+	Online pgtype.Timestamptz
 }
 
-func (q *Queries) UserOnlineNew(ctx context.Context, arg UserOnlineNewParams) error {
-	_, err := q.db.Exec(ctx, userOnlineNew, arg.UserOnline, arg.Online)
+func (q *Queries) UserOnlineUpsert(ctx context.Context, arg UserOnlineUpsertParams) error {
+	_, err := q.db.Exec(ctx, userOnlineUpsert, arg.UserID, arg.Online)
 	return err
 }

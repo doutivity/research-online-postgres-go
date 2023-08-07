@@ -4,16 +4,15 @@ import (
 	"context"
 	"testing"
 
+	postgresql "github.com/doutivity/research-online-postgres-go/internal/storage/postgres"
+
 	"github.com/jackc/pgx/v5"
 
 	"github.com/stretchr/testify/require"
 )
 
-const (
-	dataSourceName = "postgresql://yaroslav:AnySecretPassword!!@postgres1:5432/yaaws?sslmode=disable&timezone=UTC"
-)
-
-func TestPing(t *testing.T) {
+func TestUpsertOnlineStorage(t *testing.T) {
+	t.Helper()
 	if testing.Short() {
 		t.Skip()
 	}
@@ -24,5 +23,7 @@ func TestPing(t *testing.T) {
 	require.NoError(t, err)
 	defer connection.Close(ctx)
 
-	require.NoError(t, connection.Ping(ctx))
+	storage := NewUpsertOnlineStorage(postgresql.NewSqlcRepository(connection))
+
+	testOnlineStorage(t, storage)
 }
