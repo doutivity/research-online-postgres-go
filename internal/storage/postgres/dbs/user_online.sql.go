@@ -11,6 +11,32 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const userOnlineAll = `-- name: UserOnlineAll :many
+SELECT user_id, online
+FROM user_online
+ORDER BY user_id
+`
+
+func (q *Queries) UserOnlineAll(ctx context.Context) ([]UserOnline, error) {
+	rows, err := q.db.Query(ctx, userOnlineAll)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []UserOnline
+	for rows.Next() {
+		var i UserOnline
+		if err := rows.Scan(&i.UserID, &i.Online); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const userOnlineNew = `-- name: UserOnlineNew :exec
 INSERT INTO user_online (user_id, online)
 VALUES ($1, $2)
@@ -19,11 +45,11 @@ ON CONFLICT (user_id) DO UPDATE
 `
 
 type UserOnlineNewParams struct {
-	UserOnline int64
-	Online     pgtype.Timestamptz
+	UserID int64
+	Online pgtype.Timestamptz
 }
 
 func (q *Queries) UserOnlineNew(ctx context.Context, arg UserOnlineNewParams) error {
-	_, err := q.db.Exec(ctx, userOnlineNew, arg.UserOnline, arg.Online)
+	_, err := q.db.Exec(ctx, userOnlineNew, arg.UserID, arg.Online)
 	return err
 }
