@@ -143,7 +143,7 @@ func insertOnline(t testing.TB, ctx context.Context, connection *pgx.Conn, pairs
 		for _, pair := range pairs {
 			err := queries.UserOnlineUpsert(ctx, dbs.UserOnlineUpsertParams{
 				UserID: pair.UserID,
-				Online: pgtype.Timestamptz{
+				Online: pgtype.Timestamp{
 					Time:  time.Unix(pair.Timestamp, 0).UTC(),
 					Valid: true,
 				},

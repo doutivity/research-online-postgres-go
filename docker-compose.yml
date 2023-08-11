@@ -3,7 +3,7 @@ version: "3.7"
 services:
   app:
     container_name: "research-online-postgres-go-app"
-    image: golang:1.20.0-alpine
+    image: golang:1.21.0-alpine
     working_dir: /go/src/github.com/doutivity/research-online-postgres-go
     volumes:
       - .:/go/src/github.com/doutivity/research-online-postgres-go

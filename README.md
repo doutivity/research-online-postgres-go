@@ -8,6 +8,15 @@
 - Help Ukraine via [National Bank of Ukraine](https://bank.gov.ua/en/news/all/natsionalniy-bank-vidkriv-spetsrahunok-dlya-zboru-koshtiv-na-potrebi-armiyi)
 - More info on [war.ukraine.ua](https://war.ukraine.ua/) and [MFA of Ukraine](https://twitter.com/MFA_Ukraine)
 
+# Schema
+```sql
+CREATE TABLE user_online
+(
+    user_id BIGINT PRIMARY KEY,
+    online  TIMESTAMP NOT NULL
+);
+```
+
 # Examples
 ```sql
 INSERT INTO user_online (user_id, online)
@@ -90,6 +99,13 @@ WHERE to_t.user_id = from_t.user_id;
 
 -- version 1
 INSERT INTO user_online (user_id, online)
+VALUES (unnest(ARRAY [11, 12]),
+        unnest(ARRAY ['2023-08-07 16:11:00'::TIMESTAMP, '2023-08-07 16:12:00'::TIMESTAMP]))
+ON CONFLICT (user_id) DO UPDATE
+    SET online = excluded.online;
+
+-- version 2
+INSERT INTO user_online (user_id, online)
 SELECT user_id, online
 FROM unnest(
              ARRAY [11, 12],
@@ -98,7 +114,7 @@ FROM unnest(
 ON CONFLICT (user_id) DO UPDATE
     SET online = excluded.online;
 
--- version 2
+-- version 3
 INSERT INTO user_online (user_id, online)
 SELECT user_id, online
 FROM (
@@ -112,3 +128,14 @@ SELECT *
 FROM user_online
 ORDER BY user_id;
 ```
+
+# Benchmark
+```bash
+make bench
+```
+| Name                              | ns/op      | B/op    | allocs/op |
+|-----------------------------------|------------|---------|-----------|
+| BenchmarkBatchUpdateOnlineStorage | 7_895_433  | 234_932 | 2_027     |
+| BenchmarkBatchUpsertOnlineStorage | 8_661_867  | 234_931 | 2_027     |
+| BenchmarkUpdateOnlineStorage      | 63_618_638 | 160_056 | 5_003     |
+| BenchmarkUpsertOnlineStorage      | 66_979_249 | 168_056 | 5_003     |

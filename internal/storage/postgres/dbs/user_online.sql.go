@@ -41,15 +41,15 @@ const userOnlineBatchUpdate = `-- name: UserOnlineBatchUpdate :exec
 UPDATE user_online AS to_t
 SET online = from_t.online
 FROM (
-         SELECT unnest($1::BIGINT[])                  AS user_id,
-                unnest($2::TIMESTAMP WITH TIME ZONE[]) AS online
+         SELECT unnest($1::BIGINT[])   AS user_id,
+                unnest($2::TIMESTAMP[]) AS online
      ) AS from_t (user_id, online)
 WHERE to_t.user_id = from_t.user_id
 `
 
 type UserOnlineBatchUpdateParams struct {
 	UserIds []int64
-	Onlines []pgtype.Timestamptz
+	Onlines []pgtype.Timestamp
 }
 
 func (q *Queries) UserOnlineBatchUpdate(ctx context.Context, arg UserOnlineBatchUpdateParams) error {
@@ -59,18 +59,15 @@ func (q *Queries) UserOnlineBatchUpdate(ctx context.Context, arg UserOnlineBatch
 
 const userOnlineBatchUpsert = `-- name: UserOnlineBatchUpsert :exec
 INSERT INTO user_online (user_id, online)
-SELECT user_id, online
-FROM (
-         SELECT unnest($1::BIGINT[])                  AS user_id,
-                unnest($2::TIMESTAMP WITH TIME ZONE[]) AS online
-     ) AS from_t
+VALUES (unnest($1::BIGINT[]),
+        unnest($2::TIMESTAMP[]))
 ON CONFLICT (user_id) DO UPDATE
     SET online = excluded.online
 `
 
 type UserOnlineBatchUpsertParams struct {
 	UserIds []int64
-	Onlines []pgtype.Timestamptz
+	Onlines []pgtype.Timestamp
 }
 
 func (q *Queries) UserOnlineBatchUpsert(ctx context.Context, arg UserOnlineBatchUpsertParams) error {
@@ -85,7 +82,7 @@ WHERE user_id = $2
 `
 
 type UserOnlineUpdateParams struct {
-	Online pgtype.Timestamptz
+	Online pgtype.Timestamp
 	UserID int64
 }
 
@@ -103,7 +100,7 @@ ON CONFLICT (user_id) DO UPDATE
 
 type UserOnlineUpsertParams struct {
 	UserID int64
-	Online pgtype.Timestamptz
+	Online pgtype.Timestamp
 }
 
 func (q *Queries) UserOnlineUpsert(ctx context.Context, arg UserOnlineUpsertParams) error {

@@ -3,7 +3,7 @@
 CREATE TABLE user_online
 (
     user_id BIGINT PRIMARY KEY,
-    online  TIMESTAMP WITH TIME ZONE NOT NULL
+    online  TIMESTAMP NOT NULL
 );
 -- +goose StatementEnd
 

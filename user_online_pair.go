@@ -17,15 +17,15 @@ func incUserOnlinePair(source UserOnlinePair, shift int64) UserOnlinePair {
 	}
 }
 
-func userOnlinePairsToPgxSlices(pairs []UserOnlinePair) ([]int64, []pgtype.Timestamptz) {
+func userOnlinePairsToPgxSlices(pairs []UserOnlinePair) ([]int64, []pgtype.Timestamp) {
 	var (
 		userIDs    = make([]int64, len(pairs))
-		timestamps = make([]pgtype.Timestamptz, len(pairs))
+		timestamps = make([]pgtype.Timestamp, len(pairs))
 	)
 
 	for i, pair := range pairs {
 		userIDs[i] = pair.UserID
-		timestamps[i] = pgtype.Timestamptz{
+		timestamps[i] = pgtype.Timestamp{
 			Time:  time.Unix(pair.Timestamp, 0).UTC(),
 			Valid: true,
 		}

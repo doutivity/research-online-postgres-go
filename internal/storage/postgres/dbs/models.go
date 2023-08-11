@@ -10,5 +10,5 @@ import (
 
 type UserOnline struct {
 	UserID int64
-	Online pgtype.Timestamptz
+	Online pgtype.Timestamp
 }

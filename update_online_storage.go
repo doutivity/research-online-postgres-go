@@ -23,7 +23,7 @@ func (s *UpdateOnlineStorage) BatchStore(ctx context.Context, pairs []UserOnline
 		for _, pair := range pairs {
 			err := queries.UserOnlineUpdate(ctx, dbs.UserOnlineUpdateParams{
 				UserID: pair.UserID,
-				Online: pgtype.Timestamptz{
+				Online: pgtype.Timestamp{
 					Time:  time.Unix(pair.Timestamp, 0).UTC(),
 					Valid: true,
 				},
