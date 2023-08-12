@@ -9,6 +9,11 @@ UPDATE user_online
 SET online = @online
 WHERE user_id = @user_id;
 
+-- name: UserOnlineBatchExecUpdate :batchexec
+UPDATE user_online
+SET online = @online
+WHERE user_id = @user_id;
+
 -- name: UserOnlineBatchUpsert :exec
 INSERT INTO user_online (user_id, online)
 VALUES (unnest(@user_ids::BIGINT[]),
@@ -22,7 +27,7 @@ SET online = from_t.online
 FROM (
          SELECT unnest(@user_ids::BIGINT[])   AS user_id,
                 unnest(@onlines::TIMESTAMP[]) AS online
-     ) AS from_t (user_id, online)
+     ) AS from_t
 WHERE to_t.user_id = from_t.user_id;
 
 -- name: UserOnlineAll :many

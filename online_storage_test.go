@@ -84,7 +84,8 @@ func benchmarkOnlineStorage(
 	b.Helper()
 
 	const (
-		batch = 1000
+		batch  = 1000
+		online = 1679800725
 	)
 
 	ctx := context.Background()
@@ -94,7 +95,7 @@ func benchmarkOnlineStorage(
 	defer connection.Close(ctx)
 
 	truncateOnline(b, ctx, connection)
-	generateOnline(b, ctx, connection, int64(b.N*batch))
+	generateOnline(b, ctx, connection, int64(b.N*batch), online)
 
 	var (
 		startTimestamp = time.Now().Unix()
@@ -118,6 +119,9 @@ func benchmarkOnlineStorage(
 
 		require.NoError(b, err)
 	}
+	b.StopTimer()
+
+	expectedOnlineChangedCount(b, ctx, connection, int64(b.N*batch), online)
 }
 
 func truncateOnline(t testing.TB, ctx context.Context, connection *pgx.Conn) {
@@ -127,7 +131,7 @@ func truncateOnline(t testing.TB, ctx context.Context, connection *pgx.Conn) {
 	{
 		const (
 			// language=PostgreSQL
-			query = "TRUNCATE TABLE user_online RESTART IDENTITY CASCADE;"
+			query = "TRUNCATE TABLE user_online;"
 		)
 
 		_, err := connection.Exec(ctx, query)
@@ -158,19 +162,24 @@ func insertOnline(t testing.TB, ctx context.Context, connection *pgx.Conn, pairs
 	require.NoError(t, err)
 }
 
-func generateOnline(t testing.TB, ctx context.Context, connection *pgx.Conn, count int64) {
-	const (
-		// language=PostgreSQL
-		query = `INSERT INTO user_online (user_id, online)
-SELECT generate_series,
-       to_timestamp(1679800725)
-FROM generate_series(1, $1)
-ON CONFLICT (user_id) DO UPDATE
-    SET online = excluded.online;`
-	)
+func generateOnline(t testing.TB, ctx context.Context, connection *pgx.Conn, count int64, online int64) {
+	t.Helper()
 
-	_, err := connection.Exec(ctx, query, count)
+	repository := postgresql.NewSqlcRepository(connection)
+	err := repository.Queries().UserOnlineFixtureUpsert(ctx, dbs.UserOnlineFixtureUpsertParams{
+		Online: online,
+		Count:  count,
+	})
 	require.NoError(t, err)
+}
+
+func expectedOnlineChangedCount(t testing.TB, ctx context.Context, connection *pgx.Conn, count int64, online int64) {
+	t.Helper()
+
+	repository := postgresql.NewSqlcRepository(connection)
+	row, err := repository.Queries().UserOnlineFixtureCount(ctx, online)
+	require.NoError(t, err)
+	require.Equal(t, count, row.Changed)
 }
 
 func expectedOnline(t *testing.T, ctx context.Context, connection *pgx.Conn, expectedPairs []UserOnlinePair) {
