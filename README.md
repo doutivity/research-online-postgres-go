@@ -133,9 +133,10 @@ ORDER BY user_id;
 ```bash
 make bench
 ```
-| Name                              | ns/op      | B/op    | allocs/op |
-|-----------------------------------|------------|---------|-----------|
-| BenchmarkBatchUpdateOnlineStorage | 7_895_433  | 234_932 | 2_027     |
-| BenchmarkBatchUpsertOnlineStorage | 8_661_867  | 234_931 | 2_027     |
-| BenchmarkUpdateOnlineStorage      | 63_618_638 | 160_056 | 5_003     |
-| BenchmarkUpsertOnlineStorage      | 66_979_249 | 168_056 | 5_003     |
+| Name                                  | ns/op      | B/op    | allocs/op |
+|---------------------------------------|------------|---------|-----------|
+| BenchmarkBatchExecUpdateOnlineStorage | 18_773_422 | 495_247 | 5_030     |
+| BenchmarkBatchUpdateOnlineStorage     | 7_895_433  | 234_932 | 2_027     |
+| BenchmarkBatchUpsertOnlineStorage     | 8_661_867  | 234_931 | 2_027     |
+| BenchmarkUpdateOnlineStorage          | 63_618_638 | 160_056 | 5_003     |
+| BenchmarkUpsertOnlineStorage          | 66_979_249 | 168_056 | 5_003     |

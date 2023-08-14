@@ -43,7 +43,7 @@ SET online = from_t.online
 FROM (
          SELECT unnest($1::BIGINT[])   AS user_id,
                 unnest($2::TIMESTAMP[]) AS online
-     ) AS from_t (user_id, online)
+     ) AS from_t
 WHERE to_t.user_id = from_t.user_id
 `
 
