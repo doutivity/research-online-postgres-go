@@ -8,6 +8,17 @@
 - Help Ukraine via [National Bank of Ukraine](https://bank.gov.ua/en/news/all/natsionalniy-bank-vidkriv-spetsrahunok-dlya-zboru-koshtiv-na-potrebi-armiyi)
 - More info on [war.ukraine.ua](https://war.ukraine.ua/) and [MFA of Ukraine](https://twitter.com/MFA_Ukraine)
 
+# Testing
+```bash
+make env-up
+make go-test-run
+make migrate-up
+make postgres-test-run
+make test
+make bench
+make end-down
+```
+
 # Schema
 ```sql
 CREATE TABLE user_online
@@ -19,6 +30,8 @@ CREATE TABLE user_online
 
 # Examples
 ```sql
+TRUNCATE user_online;
+
 INSERT INTO user_online (user_id, online)
 VALUES (1, '2023-08-07 10:01:00'),
        (2, '2023-08-07 10:02:00'),
@@ -35,6 +48,7 @@ VALUES (1, '2023-08-07 10:01:00'),
 ON CONFLICT (user_id) DO UPDATE
     SET online = excluded.online;
 
+START TRANSACTION;
 INSERT INTO user_online (user_id, online)
 VALUES (1, '2023-08-07 11:01:00')
 ON CONFLICT (user_id) DO UPDATE
@@ -44,7 +58,9 @@ INSERT INTO user_online (user_id, online)
 VALUES (2, '2023-08-07 11:02:00')
 ON CONFLICT (user_id) DO UPDATE
     SET online = excluded.online;
+COMMIT;
 
+START TRANSACTION;
 UPDATE user_online
 SET online = '2023-08-07 12:03:00'
 WHERE user_id = 3;
@@ -52,6 +68,7 @@ WHERE user_id = 3;
 UPDATE user_online
 SET online = '2023-08-07 12:04:00'
 WHERE user_id = 4;
+COMMIT;
 
 UPDATE user_online
 SET online = CASE user_id

@@ -19,7 +19,7 @@ postgres-test-run:
 	docker exec research-online-postgres-1 psql -U yaroslav -d yaaws -c "SELECT VERSION();"
 	docker exec research-online-postgres-1 psql -U yaroslav -d yaaws -c "SELECT * FROM user_online;"
 
-init-test: env-up go-test-run postgres-test-run test env-down
+init-test: env-up go-test-run migrate-up postgres-test-run test env-down
 
 generate-sqlc:
 	# go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
