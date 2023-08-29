@@ -155,9 +155,9 @@ make bench
 | TxLoopUpsert    | 69_837_876 | 168_056 | 5_003     |
 | TxLoopUpdate    | 63_966_207 | 168_056 | 5_003     |
 | BatchExecUpsert | 19_463_064 | 503_235 | 5_030     |
-| BatchExecUpdate | 18_686_485 | 495235  | 5_030     |
-| UnnestUpsert    | 7997338    | 234930  | 2027      |
-| UnnestUpdate    | 7950833    | 234930  | 2027      |
+| BatchExecUpdate | 18_686_485 | 495_235 | 5_030     |
+| UnnestUpsert    | 7_997_338  | 234_930 | 2_027     |
+| UnnestUpdate    | 7_950_833  | 234_930 | 2_027     |
 
 ```text
 name             time/op
