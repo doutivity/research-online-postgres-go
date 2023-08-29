@@ -30,23 +30,23 @@ func testOnlineStorage(
 	var (
 		pair1v1 = UserOnlinePair{
 			UserID:    1,
-			Timestamp: 1679800725,
+			Timestamp: 2e3,
 		}
 		pair2v1 = UserOnlinePair{
 			UserID:    2,
-			Timestamp: 1679800730,
+			Timestamp: 3e4,
 		}
 		pair3v1 = UserOnlinePair{
 			UserID:    3,
-			Timestamp: 1679800735,
+			Timestamp: 4e5,
 		}
 		pair4v1 = UserOnlinePair{
 			UserID:    4,
-			Timestamp: 1679800740,
+			Timestamp: 5e6,
 		}
 		pair5v1 = UserOnlinePair{
 			UserID:    5,
-			Timestamp: 1679800745,
+			Timestamp: 6e7,
 		}
 
 		pair2v2 = incUserOnlinePair(pair2v1, 10001)

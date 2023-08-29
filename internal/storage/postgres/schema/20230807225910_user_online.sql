@@ -9,5 +9,5 @@ CREATE TABLE user_online
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE IF EXISTS user_online;
+DROP TABLE user_online;
 -- +goose StatementEnd
