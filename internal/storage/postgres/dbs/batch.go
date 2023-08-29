@@ -67,3 +67,55 @@ func (b *UserOnlineBatchExecUpdateBatchResults) Close() error {
 	b.closed = true
 	return b.br.Close()
 }
+
+const userOnlineBatchExecUpsert = `-- name: UserOnlineBatchExecUpsert :batchexec
+INSERT INTO user_online (user_id, online)
+VALUES ($1, $2)
+ON CONFLICT (user_id) DO UPDATE
+    SET online = $2
+`
+
+type UserOnlineBatchExecUpsertBatchResults struct {
+	br     pgx.BatchResults
+	tot    int
+	closed bool
+}
+
+type UserOnlineBatchExecUpsertParams struct {
+	UserID int64
+	Online pgtype.Timestamp
+}
+
+func (q *Queries) UserOnlineBatchExecUpsert(ctx context.Context, arg []UserOnlineBatchExecUpsertParams) *UserOnlineBatchExecUpsertBatchResults {
+	batch := &pgx.Batch{}
+	for _, a := range arg {
+		vals := []interface{}{
+			a.UserID,
+			a.Online,
+		}
+		batch.Queue(userOnlineBatchExecUpsert, vals...)
+	}
+	br := q.db.SendBatch(ctx, batch)
+	return &UserOnlineBatchExecUpsertBatchResults{br, len(arg), false}
+}
+
+func (b *UserOnlineBatchExecUpsertBatchResults) Exec(f func(int, error)) {
+	defer b.br.Close()
+	for t := 0; t < b.tot; t++ {
+		if b.closed {
+			if f != nil {
+				f(t, ErrBatchAlreadyClosed)
+			}
+			continue
+		}
+		_, err := b.br.Exec()
+		if f != nil {
+			f(t, err)
+		}
+	}
+}
+
+func (b *UserOnlineBatchExecUpsertBatchResults) Close() error {
+	b.closed = true
+	return b.br.Close()
+}

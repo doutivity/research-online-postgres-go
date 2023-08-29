@@ -10,7 +10,19 @@ test:
 	docker exec research-online-postgres-go-app go test ./... -v -count=1
 
 bench:
-	docker exec research-online-postgres-go-app go test ./... -v -run=$$^ -bench=. -benchmem -benchtime=1000x
+	docker exec research-online-postgres-go-app go test ./... -v -run=$$^ -bench='TxLoopUpsert'    -benchmem -benchtime=1000x -count=5 | tee ./output/bench-go-1000x-tx-loop-upsert.txt
+	docker exec research-online-postgres-go-app go test ./... -v -run=$$^ -bench='TxLoopUpdate'    -benchmem -benchtime=1000x -count=5 | tee ./output/bench-go-1000x-tx-loop-update.txt
+	docker exec research-online-postgres-go-app go test ./... -v -run=$$^ -bench='BatchExecUpsert' -benchmem -benchtime=1000x -count=5 | tee ./output/bench-go-1000x-batch-exec-upsert.txt
+	docker exec research-online-postgres-go-app go test ./... -v -run=$$^ -bench='BatchExecUpdate' -benchmem -benchtime=1000x -count=5 | tee ./output/bench-go-1000x-batch-exec-update.txt
+	docker exec research-online-postgres-go-app go test ./... -v -run=$$^ -bench='UnnestUpsert'    -benchmem -benchtime=1000x -count=5 | tee ./output/bench-go-1000x-unnest-upsert.txt
+	docker exec research-online-postgres-go-app go test ./... -v -run=$$^ -bench='UnnestUpdate'    -benchmem -benchtime=1000x -count=5 | tee ./output/bench-go-1000x-unnest-update.txt
+
+	benchstat ./output/bench-go-1000x-tx-loop-upsert.txt
+	benchstat ./output/bench-go-1000x-tx-loop-update.txt
+	benchstat ./output/bench-go-1000x-batch-exec-upsert.txt
+	benchstat ./output/bench-go-1000x-batch-exec-update.txt
+	benchstat ./output/bench-go-1000x-unnest-upsert.txt
+	benchstat ./output/bench-go-1000x-unnest-update.txt
 
 go-test-run:
 	docker exec research-online-postgres-go-app go run main.go

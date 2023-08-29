@@ -11,14 +11,14 @@ type BatchUpdateOnlineStorage struct {
 	repository *postgresql.Repository
 }
 
-func NewBatchUpdateOnlineStorage(repository *postgresql.Repository) *BatchUpdateOnlineStorage {
+func NewUnnestUpdateOnlineStorage(repository *postgresql.Repository) *BatchUpdateOnlineStorage {
 	return &BatchUpdateOnlineStorage{repository: repository}
 }
 
 func (s *BatchUpdateOnlineStorage) BatchStore(ctx context.Context, pairs []UserOnlinePair) error {
 	userIDs, timestamps := userOnlinePairsToPgxSlices(pairs)
 
-	return s.repository.Queries().UserOnlineBatchUpdate(ctx, dbs.UserOnlineBatchUpdateParams{
+	return s.repository.Queries().UserOnlineUnnestUpdate(ctx, dbs.UserOnlineUnnestUpdateParams{
 		UserIds: userIDs,
 		Onlines: timestamps,
 	})

@@ -11,33 +11,7 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const userOnlineAll = `-- name: UserOnlineAll :many
-SELECT user_id, online
-FROM user_online
-ORDER BY user_id
-`
-
-func (q *Queries) UserOnlineAll(ctx context.Context) ([]UserOnline, error) {
-	rows, err := q.db.Query(ctx, userOnlineAll)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []UserOnline
-	for rows.Next() {
-		var i UserOnline
-		if err := rows.Scan(&i.UserID, &i.Online); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const userOnlineBatchUpdate = `-- name: UserOnlineBatchUpdate :exec
+const userOnlineUnnestUpdate = `-- name: UserOnlineUnnestUpdate :exec
 UPDATE user_online AS to_t
 SET online = from_t.online
 FROM (
@@ -47,17 +21,17 @@ FROM (
 WHERE to_t.user_id = from_t.user_id
 `
 
-type UserOnlineBatchUpdateParams struct {
+type UserOnlineUnnestUpdateParams struct {
 	UserIds []int64
 	Onlines []pgtype.Timestamp
 }
 
-func (q *Queries) UserOnlineBatchUpdate(ctx context.Context, arg UserOnlineBatchUpdateParams) error {
-	_, err := q.db.Exec(ctx, userOnlineBatchUpdate, arg.UserIds, arg.Onlines)
+func (q *Queries) UserOnlineUnnestUpdate(ctx context.Context, arg UserOnlineUnnestUpdateParams) error {
+	_, err := q.db.Exec(ctx, userOnlineUnnestUpdate, arg.UserIds, arg.Onlines)
 	return err
 }
 
-const userOnlineBatchUpsert = `-- name: UserOnlineBatchUpsert :exec
+const userOnlineUnnestUpsert = `-- name: UserOnlineUnnestUpsert :exec
 INSERT INTO user_online (user_id, online)
 VALUES (unnest($1::BIGINT[]),
         unnest($2::TIMESTAMP[]))
@@ -65,13 +39,13 @@ ON CONFLICT (user_id) DO UPDATE
     SET online = excluded.online
 `
 
-type UserOnlineBatchUpsertParams struct {
+type UserOnlineUnnestUpsertParams struct {
 	UserIds []int64
 	Onlines []pgtype.Timestamp
 }
 
-func (q *Queries) UserOnlineBatchUpsert(ctx context.Context, arg UserOnlineBatchUpsertParams) error {
-	_, err := q.db.Exec(ctx, userOnlineBatchUpsert, arg.UserIds, arg.Onlines)
+func (q *Queries) UserOnlineUnnestUpsert(ctx context.Context, arg UserOnlineUnnestUpsertParams) error {
+	_, err := q.db.Exec(ctx, userOnlineUnnestUpsert, arg.UserIds, arg.Onlines)
 	return err
 }
 

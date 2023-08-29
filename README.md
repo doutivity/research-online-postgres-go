@@ -88,20 +88,20 @@ WHERE to_t.user_id = from_t.user_id;
 -- version 1
 SELECT *
 FROM unnest(
-             ARRAY [9, 10],
-             ARRAY ['2023-08-07 15:09:00'::TIMESTAMP, '2023-08-07 15:10:00'::TIMESTAMP]
+             ARRAY[9, 10],
+             ARRAY['2023-08-07 15:09:00'::TIMESTAMP, '2023-08-07 15:10:00'::TIMESTAMP]
          ) AS from_t (user_id, online);
 
 -- version 2 supported https://github.com/sqlc-dev/sqlc/issues/958
-SELECT unnest(ARRAY [9, 10])                                                              AS user_id,
-       unnest(ARRAY ['2023-08-07 15:09:00'::TIMESTAMP, '2023-08-07 15:10:00'::TIMESTAMP]) AS online;
+SELECT unnest(ARRAY[9, 10])                                                              AS user_id,
+       unnest(ARRAY['2023-08-07 15:09:00'::TIMESTAMP, '2023-08-07 15:10:00'::TIMESTAMP]) AS online;
 
 -- version 1
 UPDATE user_online AS to_t
 SET online = from_t.online
 FROM unnest(
-             ARRAY [9, 10],
-             ARRAY ['2023-08-07 15:09:00'::TIMESTAMP, '2023-08-07 15:10:00'::TIMESTAMP]
+             ARRAY[9, 10],
+             ARRAY['2023-08-07 15:09:00'::TIMESTAMP, '2023-08-07 15:10:00'::TIMESTAMP]
          ) AS from_t (user_id, online)
 WHERE to_t.user_id = from_t.user_id;
 
@@ -109,15 +109,15 @@ WHERE to_t.user_id = from_t.user_id;
 UPDATE user_online AS to_t
 SET online = from_t.online
 FROM (
-         SELECT unnest(ARRAY [9, 10])                                                              AS user_id,
-                unnest(ARRAY ['2023-08-07 15:09:00'::TIMESTAMP, '2023-08-07 15:10:00'::TIMESTAMP]) AS online
+         SELECT unnest(ARRAY[9, 10])                                                              AS user_id,
+                unnest(ARRAY['2023-08-07 15:09:00'::TIMESTAMP, '2023-08-07 15:10:00'::TIMESTAMP]) AS online
      ) AS from_t
 WHERE to_t.user_id = from_t.user_id;
 
 -- version 1
 INSERT INTO user_online (user_id, online)
-VALUES (unnest(ARRAY [11, 12]),
-        unnest(ARRAY ['2023-08-07 16:11:00'::TIMESTAMP, '2023-08-07 16:12:00'::TIMESTAMP]))
+VALUES (unnest(ARRAY[11, 12]),
+        unnest(ARRAY['2023-08-07 16:11:00'::TIMESTAMP, '2023-08-07 16:12:00'::TIMESTAMP]))
 ON CONFLICT (user_id) DO UPDATE
     SET online = excluded.online;
 
@@ -125,8 +125,8 @@ ON CONFLICT (user_id) DO UPDATE
 INSERT INTO user_online (user_id, online)
 SELECT user_id, online
 FROM unnest(
-             ARRAY [11, 12],
-             ARRAY ['2023-08-07 16:11:00'::TIMESTAMP, '2023-08-07 16:12:00'::TIMESTAMP]
+             ARRAY[11, 12],
+             ARRAY['2023-08-07 16:11:00'::TIMESTAMP, '2023-08-07 16:12:00'::TIMESTAMP]
          ) AS from_t (user_id, online)
 ON CONFLICT (user_id) DO UPDATE
     SET online = excluded.online;
@@ -135,8 +135,8 @@ ON CONFLICT (user_id) DO UPDATE
 INSERT INTO user_online (user_id, online)
 SELECT user_id, online
 FROM (
-         SELECT unnest(ARRAY [11, 12])                                                             AS user_id,
-                unnest(ARRAY ['2023-08-07 16:11:00'::TIMESTAMP, '2023-08-07 16:12:00'::TIMESTAMP]) AS online
+         SELECT unnest(ARRAY[11, 12])                                                             AS user_id,
+                unnest(ARRAY['2023-08-07 16:11:00'::TIMESTAMP, '2023-08-07 16:12:00'::TIMESTAMP]) AS online
      ) AS from_t
 ON CONFLICT (user_id) DO UPDATE
     SET online = excluded.online;
@@ -150,10 +150,37 @@ ORDER BY user_id;
 ```bash
 make bench
 ```
-| Name                                  | ns/op      | B/op    | allocs/op |
-|---------------------------------------|------------|---------|-----------|
-| BenchmarkBatchExecUpdateOnlineStorage | 18_773_422 | 495_247 | 5_030     |
-| BenchmarkBatchUpdateOnlineStorage     | 7_895_433  | 234_932 | 2_027     |
-| BenchmarkBatchUpsertOnlineStorage     | 8_661_867  | 234_931 | 2_027     |
-| BenchmarkUpdateOnlineStorage          | 63_618_638 | 160_056 | 5_003     |
-| BenchmarkUpsertOnlineStorage          | 66_979_249 | 168_056 | 5_003     |
+| Name            | ns/op      | B/op    | allocs/op |
+|-----------------|------------|---------|-----------|
+| TxLoopUpsert    | 69_837_876 | 168_056 | 5_003     |
+| TxLoopUpdate    | 63_966_207 | 168_056 | 5_003     |
+| BatchExecUpsert | 19_463_064 | 503_235 | 5_030     |
+| BatchExecUpdate | 18_686_485 | 495235  | 5_030     |
+| UnnestUpsert    | 7997338    | 234930  | 2027      |
+| UnnestUpdate    | 7950833    | 234930  | 2027      |
+
+```text
+name             time/op
+TxLoopUpsert     73.2ms ± 8%
+TxLoopUpdate     71.1ms ±12%
+BatchExecUpsert  20.3ms ±10%
+BatchExecUpdate  20.2ms ±10%
+UnnestUpsert     8.27ms ± 3%
+UnnestUpdate     8.41ms ± 5%
+
+name              alloc/op
+TxLoopUpsert      168kB ± 0%
+TxLoopUpdate      160kB ± 0%
+BatchExecUpsert   503kB ± 0%
+BatchExecUpdate   495kB ± 0%
+UnnestUpsert      235kB ± 0%
+UnnestUpdate      235kB ± 0%
+
+name              allocs/op
+TxLoopUpsert      5.00k ± 0%
+TxLoopUpdate      5.00k ± 0%
+BatchExecUpsert   5.03k ± 0%
+BatchExecUpdate   5.03k ± 0%
+UnnestUpsert      2.03k ± 0%
+UnnestUpdate      2.03k ± 0%
+```

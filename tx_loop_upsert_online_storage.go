@@ -10,15 +10,15 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type UpsertOnlineStorage struct {
+type TxLoopUpsertOnlineStorage struct {
 	repository *postgresql.Repository
 }
 
-func NewUpsertOnlineStorage(repository *postgresql.Repository) *UpsertOnlineStorage {
-	return &UpsertOnlineStorage{repository: repository}
+func NewTxLoopUpsertOnlineStorage(repository *postgresql.Repository) *TxLoopUpsertOnlineStorage {
+	return &TxLoopUpsertOnlineStorage{repository: repository}
 }
 
-func (s *UpsertOnlineStorage) BatchStore(ctx context.Context, pairs []UserOnlinePair) error {
+func (s *TxLoopUpsertOnlineStorage) BatchStore(ctx context.Context, pairs []UserOnlinePair) error {
 	return s.repository.WithTransaction(ctx, func(queries *dbs.Queries) error {
 		for _, pair := range pairs {
 			err := queries.UserOnlineUpsert(ctx, dbs.UserOnlineUpsertParams{
