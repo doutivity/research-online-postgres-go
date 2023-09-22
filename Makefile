@@ -6,10 +6,16 @@ env-up:
 env-down:
 	docker-compose down --remove-orphans -v
 
-test:
+go-test:
 	docker exec research-online-postgres-go-app go test ./... -v -count=1
 
-bench:
+docker-go-version:
+	docker exec research-online-postgres-go-app go run main.go
+
+docker-pg-version:
+	docker exec research-online-postgres-1 psql -U yaroslav -d yaaws -c "SELECT VERSION();"
+
+go-bench:
 	docker exec research-online-postgres-go-app go test ./... -v -run=$$^ -bench='TxLoopUpsert'    -benchmem -benchtime=1000x -count=5 | tee ./output/bench-go-1000x-tx-loop-upsert.txt
 	docker exec research-online-postgres-go-app go test ./... -v -run=$$^ -bench='TxLoopUpdate'    -benchmem -benchtime=1000x -count=5 | tee ./output/bench-go-1000x-tx-loop-update.txt
 	docker exec research-online-postgres-go-app go test ./... -v -run=$$^ -bench='BatchExecUpsert' -benchmem -benchtime=1000x -count=5 | tee ./output/bench-go-1000x-batch-exec-upsert.txt
@@ -24,35 +30,36 @@ bench:
 	benchstat ./output/bench-go-1000x-unnest-upsert.txt
 	benchstat ./output/bench-go-1000x-unnest-update.txt
 
-go-test-run:
-	docker exec research-online-postgres-go-app go run main.go
+test:
+	make env-up
+	make docker-go-version
+	make docker-pg-version
+	make migrate-up
+	make go-test
+	make env-down
 
-postgres-test-run:
-	docker exec research-online-postgres-1 psql -U yaroslav -d yaaws -c "SELECT VERSION();"
-	docker exec research-online-postgres-1 psql -U yaroslav -d yaaws -c "SELECT * FROM user_online;"
-
-init-test: env-up go-test-run migrate-up postgres-test-run test env-down
-
+# go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+# sqlc generate
+#
+# alternative
+# docker run --rm -v $(shell pwd):/src -w /src kjconroy/sqlc generate
 generate-sqlc:
-	# go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
 	sqlc generate
-	# alternative
-	# docker run --rm -v $(shell pwd):/src -w /src kjconroy/sqlc generate
 
 # Creates new migration file with the current timestamp
 # Example: make create-new-migration-file NAME=<name>
 create-new-migration-file:
 	$(eval NAME ?= noname)
-	mkdir -p ./internal/storage/postgres/schema/
-	goose -dir ./internal/storage/postgres/schema/ create $(NAME) sql
+	mkdir -p ./internal/storage/postgres/migrations/
+	goose -dir ./internal/storage/postgres/migrations/ create $(NAME) sql
 
 migrate-up:
-	goose -dir ./internal/storage/postgres/schema/ -table schema_migrations postgres $(POSTGRES_URI) up
+	goose -dir ./internal/storage/postgres/migrations/ -table schema_migrations postgres $(POSTGRES_URI) up
 migrate-redo:
-	goose -dir ./internal/storage/postgres/schema/ -table schema_migrations postgres $(POSTGRES_URI) redo
+	goose -dir ./internal/storage/postgres/migrations/ -table schema_migrations postgres $(POSTGRES_URI) redo
 migrate-down:
-	goose -dir ./internal/storage/postgres/schema/ -table schema_migrations postgres $(POSTGRES_URI) down
+	goose -dir ./internal/storage/postgres/migrations/ -table schema_migrations postgres $(POSTGRES_URI) down
 migrate-reset:
-	goose -dir ./internal/storage/postgres/schema/ -table schema_migrations postgres $(POSTGRES_URI) reset
+	goose -dir ./internal/storage/postgres/migrations/ -table schema_migrations postgres $(POSTGRES_URI) reset
 migrate-status:
-	goose -dir ./internal/storage/postgres/schema/ -table schema_migrations postgres $(POSTGRES_URI) status
+	goose -dir ./internal/storage/postgres/migrations/ -table schema_migrations postgres $(POSTGRES_URI) status

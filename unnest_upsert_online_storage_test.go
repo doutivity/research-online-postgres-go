@@ -4,10 +4,9 @@ import (
 	"context"
 	"testing"
 
-	postgresql "github.com/doutivity/research-online-postgres-go/internal/storage/postgres"
+	"github.com/doutivity/research-online-postgres-go/internal/storage/postgres"
 
-	"github.com/jackc/pgx/v5"
-
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/stretchr/testify/require"
 )
 
@@ -19,11 +18,11 @@ func TestUnnestUpsertOnlineStorage(t *testing.T) {
 
 	ctx := context.Background()
 
-	connection, err := pgx.Connect(ctx, dataSourceName)
+	pool, err := pgxpool.New(ctx, dataSourceName)
 	require.NoError(t, err)
-	defer connection.Close(ctx)
+	defer pool.Close()
 
-	storage := NewUnnestUpsertOnlineStorage(postgresql.NewSqlcRepository(connection))
+	storage := NewUnnestUpsertOnlineStorage(postgres.NewDatabase(pool))
 
 	testOnlineStorage(t, storage)
 }
@@ -36,11 +35,11 @@ func BenchmarkUnnestUpsertOnlineStorage(b *testing.B) {
 
 	ctx := context.Background()
 
-	connection, err := pgx.Connect(ctx, dataSourceName)
+	pool, err := pgxpool.New(ctx, dataSourceName)
 	require.NoError(b, err)
-	defer connection.Close(ctx)
+	defer pool.Close()
 
-	storage := NewUnnestUpsertOnlineStorage(postgresql.NewSqlcRepository(connection))
+	storage := NewUnnestUpsertOnlineStorage(postgres.NewDatabase(pool))
 
 	benchmarkOnlineStorage(b, storage)
 }

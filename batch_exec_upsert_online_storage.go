@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	postgresql "github.com/doutivity/research-online-postgres-go/internal/storage/postgres"
+	"github.com/doutivity/research-online-postgres-go/internal/storage/postgres"
 	"github.com/doutivity/research-online-postgres-go/internal/storage/postgres/dbs"
 
 	"github.com/hashicorp/go-multierror"
@@ -12,11 +12,11 @@ import (
 )
 
 type BatchExecUpsertOnlineStorage struct {
-	repository *postgresql.Repository
+	db *postgres.Database
 }
 
-func NewBatchExecUpsertOnlineStorage(repository *postgresql.Repository) *BatchExecUpsertOnlineStorage {
-	return &BatchExecUpsertOnlineStorage{repository: repository}
+func NewBatchExecUpsertOnlineStorage(db *postgres.Database) *BatchExecUpsertOnlineStorage {
+	return &BatchExecUpsertOnlineStorage{db: db}
 }
 
 func (s *BatchExecUpsertOnlineStorage) BatchStore(ctx context.Context, pairs []UserOnlinePair) error {
@@ -33,7 +33,7 @@ func (s *BatchExecUpsertOnlineStorage) BatchStore(ctx context.Context, pairs []U
 
 	var batchErr error
 
-	s.repository.Queries().UserOnlineBatchExecUpsert(ctx, args).Exec(func(i int, err error) {
+	s.db.Queries().UserOnlineBatchExecUpsert(ctx, args).Exec(func(i int, err error) {
 		if err != nil {
 			batchErr = multierror.Append(batchErr, err)
 		}

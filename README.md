@@ -11,12 +11,12 @@
 # Testing
 ```bash
 make env-up
-make go-test-run
+make docker-go-version
+make docker-pg-version
 make migrate-up
-make postgres-test-run
-make test
-make bench
-make end-down
+make go-test
+make go-bench
+make env-down
 ```
 
 # Schema
