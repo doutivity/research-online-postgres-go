@@ -23,7 +23,7 @@ make env-down
 ```sql
 CREATE TABLE user_online
 (
-    user_id BIGINT PRIMARY KEY,
+    user_id BIGINT    NOT NULL PRIMARY KEY,
     online  TIMESTAMP NOT NULL
 );
 ```
@@ -146,41 +146,84 @@ FROM user_online
 ORDER BY user_id;
 ```
 
-# Benchmark
+# Benchmark (Postgres 15.3) (Go 1.20) (PC) Intel(R) Core(TM) i7-8750H CPU @ 2.20GHz
 ```bash
-make bench
+make go-bench
 ```
+
 | Name            | ns/op      | B/op    | allocs/op |
 |-----------------|------------|---------|-----------|
-| TxLoopUpsert    | 69_837_876 | 168_056 | 5_003     |
 | TxLoopUpdate    | 63_966_207 | 168_056 | 5_003     |
-| BatchExecUpsert | 19_463_064 | 503_235 | 5_030     |
-| BatchExecUpdate | 18_686_485 | 495_235 | 5_030     |
-| UnnestUpsert    | 7_997_338  | 234_930 | 2_027     |
+| TxLoopUpsert    | 69_837_876 | 168_056 | 5_003     |
 | UnnestUpdate    | 7_950_833  | 234_930 | 2_027     |
+| UnnestUpsert    | 7_997_338  | 234_930 | 2_027     |
+| BatchExecUpdate | 18_686_485 | 495_235 | 5_030     |
+| BatchExecUpsert | 19_463_064 | 503_235 | 5_030     |
 
-```text
-name             time/op
-TxLoopUpsert     73.2ms ± 8%
-TxLoopUpdate     71.1ms ±12%
-BatchExecUpsert  20.3ms ±10%
-BatchExecUpdate  20.2ms ±10%
-UnnestUpsert     8.27ms ± 3%
-UnnestUpdate     8.41ms ± 5%
+| name            | time/op     |
+|-----------------|-------------|
+| TxLoopUpdate    | 71.1ms ±12% |
+| TxLoopUpsert    | 73.2ms ± 8% |
+| UnnestUpdate    | 8.41ms ± 5% |
+| UnnestUpsert    | 8.27ms ± 3% |
+| BatchExecUpdate | 20.2ms ±10% |
+| BatchExecUpsert | 20.3ms ±10% |
 
-name              alloc/op
-TxLoopUpsert      168kB ± 0%
-TxLoopUpdate      160kB ± 0%
-BatchExecUpsert   503kB ± 0%
-BatchExecUpdate   495kB ± 0%
-UnnestUpsert      235kB ± 0%
-UnnestUpdate      235kB ± 0%
+| name            | B/op       |
+|-----------------|------------|
+| TxLoopUpdate    | 160kB ± 0% |
+| TxLoopUpsert    | 168kB ± 0% |
+| UnnestUpdate    | 235kB ± 0% |
+| UnnestUpsert    | 235kB ± 0% |
+| BatchExecUpdate | 495kB ± 0% |
+| BatchExecUpsert | 503kB ± 0% |
 
-name              allocs/op
-TxLoopUpsert      5.00k ± 0%
-TxLoopUpdate      5.00k ± 0%
-BatchExecUpsert   5.03k ± 0%
-BatchExecUpdate   5.03k ± 0%
-UnnestUpsert      2.03k ± 0%
-UnnestUpdate      2.03k ± 0%
+| name            | allocs/op  |
+|-----------------|------------|
+| TxLoopUpdate    | 5.00k ± 0% |
+| TxLoopUpsert    | 5.00k ± 0% |
+| UnnestUpdate    | 2.03k ± 0% |
+| UnnestUpsert    | 2.03k ± 0% |
+| BatchExecUpdate | 5.03k ± 0% |
+| BatchExecUpsert | 5.03k ± 0% |
+
+# Benchmark (Postgres 16.0) (PC) (Go 1.21) Intel(R) Core(TM) i7-12700H
+```bash
+make go-bench
 ```
+
+| Name            | ns/op      | B/op    | allocs/op |
+|-----------------|------------|---------|-----------|
+| TxLoopUpdate    | 19_786_396 | 160_135 | 5_005     |
+| TxLoopUpsert    | 20_168_659 | 168_135 | 5_005     |
+| UnnestUpdate    | 3_935_782  | 234_985 | 2_028     |
+| UnnestUpsert    | 3_902_771  | 234_985 | 2_028     |
+| BatchExecUpdate | 6_984_122  | 495_315 | 5_032     |
+| BatchExecUpsert | 6_630_488  | 503_316 | 5_032     |
+
+| name            | time/op       |
+|-----------------|---------------|
+| TxLoopUpdate    | 20.45ms ±  2% |
+| TxLoopUpsert    | 26.59ms ± 24% |
+| UnnestUpdate    | 3.997ms ±  1% |
+| UnnestUpsert    | 3.998ms ±  2% |
+| BatchExecUpdate | 7.044ms ±  1% |
+| BatchExecUpsert | 7.004ms ±  8% |
+
+| name            | B/op         |
+|-----------------|--------------|
+| TxLoopUpdate    | 156.4kB ± 0% |
+| TxLoopUpsert    | 164.2kB ± 0% |
+| UnnestUpdate    | 229.5kB ± 0% |
+| UnnestUpsert    | 229.5kB ± 0% |
+| BatchExecUpdate | 483.7kB ± 0% |
+| BatchExecUpsert | 491.5kB ± 0% |
+
+| name            | allocs/op   |
+|-----------------|-------------|
+| TxLoopUpdate    | 5.005k ± 0% |
+| TxLoopUpsert    | 5.005k ± 0% |
+| UnnestUpdate    | 2.028k ± 0% |
+| UnnestUpsert    | 2.028k ± 0% |
+| BatchExecUpdate | 5.032k ± 0% |
+| BatchExecUpsert | 5.032k ± 0% |
