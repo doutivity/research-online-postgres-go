@@ -314,3 +314,39 @@ make go-bench
 ```bash
 make go-bench
 ```
+
+| Name            | ns/op      | B/op    | allocs/op |
+|-----------------|------------|---------|-----------|
+| TxLoopUpdate    | 50_295_785 | 160_135 | 5_005     |
+| TxLoopUpsert    | 51_178_502 | 168_135 | 5_005     |
+| UnnestUpdate    | 4_817_787  | 234_985 | 2_028     |
+| UnnestUpsert    | 4_876_623  | 234_985 | 2_028     |
+| BatchExecUpdate | 10_703_234 | 495_315 | 5_032     |
+| BatchExecUpsert | 10_770_682 | 503_316 | 5_032     |
+
+| name            | time/op      |
+|-----------------|--------------|
+| TxLoopUpdate    | 52.05ms ± 3% |
+| TxLoopUpsert    | 52.37ms ± 3% |
+| UnnestUpdate    | 5.005ms ± 3% |
+| UnnestUpsert    | 5.024ms ± 9% |
+| BatchExecUpdate | 10.95ms ± 8% |
+| BatchExecUpsert | 11.38ms ± 9% |
+
+| name            | B/op         |
+|-----------------|--------------|
+| TxLoopUpdate    | 156.4kB ± 0% |
+| TxLoopUpsert    | 164.2kB ± 0% |
+| UnnestUpdate    | 229.5kB ± 0% |
+| UnnestUpsert    | 229.5kB ± 0% |
+| BatchExecUpdate | 483.7kB ± 0% |
+| BatchExecUpsert | 491.5kB ± 0% |
+
+| name            | allocs/op   |
+|-----------------|-------------|
+| TxLoopUpdate    | 5.005k ± 0% |
+| TxLoopUpsert    | 5.005k ± 0% |
+| UnnestUpdate    | 2.028k ± 0% |
+| UnnestUpsert    | 2.028k ± 0% |
+| BatchExecUpdate | 5.032k ± 0% |
+| BatchExecUpsert | 5.032k ± 0% |
