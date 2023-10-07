@@ -69,7 +69,7 @@ const userOnlineUpsert = `-- name: UserOnlineUpsert :exec
 INSERT INTO user_online (user_id, online)
 VALUES ($1, $2)
 ON CONFLICT (user_id) DO UPDATE
-    SET online = $2
+    SET online = excluded.online
 `
 
 type UserOnlineUpsertParams struct {

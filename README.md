@@ -228,7 +228,7 @@ make go-bench
 | BatchExecUpdate | 5.032k ± 0% |
 | BatchExecUpsert | 5.032k ± 0% |
 
-# Benchmark (Postgres 16.0) (Go 1.21) ([vultr.com](https://www.vultr.com/?ref=8741375) VPS 131072.00 MB 8 cores / 16 threads @ 3.2 GHz) ($350/month) Intel(R) Xeon(R) E-2388G CPU @ 3.20GHz
+# Benchmark (Postgres 16.0) (Go 1.21) ([vultr.com](https://www.vultr.com/?ref=8741375) VPS Bare Metal 128 GB 8 cores / 16 threads @ 3.2 GHz) ($350/month) Intel(R) Xeon(R) E-2388G CPU @ 3.20GHz
 ```bash
 make go-bench
 ```
@@ -268,3 +268,8 @@ make go-bench
 | UnnestUpsert    | 2.028k ± 0% |
 | BatchExecUpdate | 5.032k ± 0% |
 | BatchExecUpsert | 5.032k ± 0% |
+
+# Benchmark (Postgres 16.0) (Go 1.21) ([vultr.com](https://www.vultr.com/?ref=8741375) VPS Bare Metal 256 GB 24 cores / 48 threads @ 2.9 GHz) ($725/month) AMD EPYC 7443P 24-Core Processor
+```bash
+make go-bench
+```

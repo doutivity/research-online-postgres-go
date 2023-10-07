@@ -2,7 +2,7 @@
 INSERT INTO user_online (user_id, online)
 VALUES (@user_id, @online)
 ON CONFLICT (user_id) DO UPDATE
-    SET online = @online;
+    SET online = excluded.online;
 
 -- name: UserOnlineUpdate :exec
 UPDATE user_online
@@ -13,7 +13,7 @@ WHERE user_id = @user_id;
 INSERT INTO user_online (user_id, online)
 VALUES (@user_id, @online)
 ON CONFLICT (user_id) DO UPDATE
-    SET online = @online;
+    SET online = excluded.online;
 
 -- name: UserOnlineBatchExecUpdate :batchexec
 UPDATE user_online

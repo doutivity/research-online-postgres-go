@@ -61,8 +61,8 @@ func (q *Queries) UserOnlineFixtureCount(ctx context.Context, online int64) (Use
 const userOnlineFixtureUpsert = `-- name: UserOnlineFixtureUpsert :exec
 INSERT INTO user_online (user_id, online)
 SELECT generate_series,
-       to_timestamp($1::BIGINT)
-FROM generate_series(1, $2::BIGINT)
+       TO_TIMESTAMP($1::BIGINT)
+FROM GENERATE_SERIES(1, $2::BIGINT)
 ON CONFLICT (user_id) DO UPDATE
     SET online = excluded.online
 `

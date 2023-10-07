@@ -6,8 +6,8 @@ ORDER BY user_id;
 -- name: UserOnlineFixtureUpsert :exec
 INSERT INTO user_online (user_id, online)
 SELECT generate_series,
-       to_timestamp(@online::BIGINT)
-FROM generate_series(1, @count::BIGINT)
+       TO_TIMESTAMP(@online::BIGINT)
+FROM GENERATE_SERIES(1, @count::BIGINT)
 ON CONFLICT (user_id) DO UPDATE
     SET online = excluded.online;
 
