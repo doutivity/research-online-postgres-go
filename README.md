@@ -23,7 +23,7 @@ make env-down
 ```sql
 CREATE TABLE user_online
 (
-    user_id BIGINT PRIMARY KEY,
+    user_id BIGINT    NOT NULL PRIMARY KEY,
     online  TIMESTAMP NOT NULL
 );
 ```
@@ -146,41 +146,207 @@ FROM user_online
 ORDER BY user_id;
 ```
 
-# Benchmark
+# Benchmark (Postgres 15.3) (Go 1.20) (PC) Intel(R) Core(TM) i7-8750H CPU @ 2.20GHz
 ```bash
-make bench
+make go-bench
 ```
+
 | Name            | ns/op      | B/op    | allocs/op |
 |-----------------|------------|---------|-----------|
-| TxLoopUpsert    | 69_837_876 | 168_056 | 5_003     |
 | TxLoopUpdate    | 63_966_207 | 168_056 | 5_003     |
-| BatchExecUpsert | 19_463_064 | 503_235 | 5_030     |
-| BatchExecUpdate | 18_686_485 | 495_235 | 5_030     |
-| UnnestUpsert    | 7_997_338  | 234_930 | 2_027     |
+| TxLoopUpsert    | 69_837_876 | 168_056 | 5_003     |
 | UnnestUpdate    | 7_950_833  | 234_930 | 2_027     |
+| UnnestUpsert    | 7_997_338  | 234_930 | 2_027     |
+| BatchExecUpdate | 18_686_485 | 495_235 | 5_030     |
+| BatchExecUpsert | 19_463_064 | 503_235 | 5_030     |
 
-```text
-name             time/op
-TxLoopUpsert     73.2ms ± 8%
-TxLoopUpdate     71.1ms ±12%
-BatchExecUpsert  20.3ms ±10%
-BatchExecUpdate  20.2ms ±10%
-UnnestUpsert     8.27ms ± 3%
-UnnestUpdate     8.41ms ± 5%
+| name            | time/op     |
+|-----------------|-------------|
+| TxLoopUpdate    | 71.1ms ±12% |
+| TxLoopUpsert    | 73.2ms ± 8% |
+| UnnestUpdate    | 8.41ms ± 5% |
+| UnnestUpsert    | 8.27ms ± 3% |
+| BatchExecUpdate | 20.2ms ±10% |
+| BatchExecUpsert | 20.3ms ±10% |
 
-name              alloc/op
-TxLoopUpsert      168kB ± 0%
-TxLoopUpdate      160kB ± 0%
-BatchExecUpsert   503kB ± 0%
-BatchExecUpdate   495kB ± 0%
-UnnestUpsert      235kB ± 0%
-UnnestUpdate      235kB ± 0%
+| name            | B/op       |
+|-----------------|------------|
+| TxLoopUpdate    | 160kB ± 0% |
+| TxLoopUpsert    | 168kB ± 0% |
+| UnnestUpdate    | 235kB ± 0% |
+| UnnestUpsert    | 235kB ± 0% |
+| BatchExecUpdate | 495kB ± 0% |
+| BatchExecUpsert | 503kB ± 0% |
 
-name              allocs/op
-TxLoopUpsert      5.00k ± 0%
-TxLoopUpdate      5.00k ± 0%
-BatchExecUpsert   5.03k ± 0%
-BatchExecUpdate   5.03k ± 0%
-UnnestUpsert      2.03k ± 0%
-UnnestUpdate      2.03k ± 0%
+| name            | allocs/op  |
+|-----------------|------------|
+| TxLoopUpdate    | 5.00k ± 0% |
+| TxLoopUpsert    | 5.00k ± 0% |
+| UnnestUpdate    | 2.03k ± 0% |
+| UnnestUpsert    | 2.03k ± 0% |
+| BatchExecUpdate | 5.03k ± 0% |
+| BatchExecUpsert | 5.03k ± 0% |
+
+# Benchmark (Postgres 16.0) (Go 1.21) (PC) Intel(R) Core(TM) i7-12700H
+```bash
+make go-bench
 ```
+
+| Name            | ns/op      | B/op    | allocs/op |
+|-----------------|------------|---------|-----------|
+| TxLoopUpdate    | 19_786_396 | 160_135 | 5_005     |
+| TxLoopUpsert    | 20_168_659 | 168_135 | 5_005     |
+| UnnestUpdate    | 3_935_782  | 234_985 | 2_028     |
+| UnnestUpsert    | 3_902_771  | 234_985 | 2_028     |
+| BatchExecUpdate | 6_984_122  | 495_315 | 5_032     |
+| BatchExecUpsert | 6_630_488  | 503_316 | 5_032     |
+
+| name            | time/op       |
+|-----------------|---------------|
+| TxLoopUpdate    | 20.45ms ±  2% |
+| TxLoopUpsert    | 26.59ms ± 24% |
+| UnnestUpdate    | 3.997ms ±  1% |
+| UnnestUpsert    | 3.998ms ±  2% |
+| BatchExecUpdate | 7.044ms ±  1% |
+| BatchExecUpsert | 7.004ms ±  8% |
+
+| name            | B/op         |
+|-----------------|--------------|
+| TxLoopUpdate    | 156.4kB ± 0% |
+| TxLoopUpsert    | 164.2kB ± 0% |
+| UnnestUpdate    | 229.5kB ± 0% |
+| UnnestUpsert    | 229.5kB ± 0% |
+| BatchExecUpdate | 483.7kB ± 0% |
+| BatchExecUpsert | 491.5kB ± 0% |
+
+| name            | allocs/op   |
+|-----------------|-------------|
+| TxLoopUpdate    | 5.005k ± 0% |
+| TxLoopUpsert    | 5.005k ± 0% |
+| UnnestUpdate    | 2.028k ± 0% |
+| UnnestUpsert    | 2.028k ± 0% |
+| BatchExecUpdate | 5.032k ± 0% |
+| BatchExecUpsert | 5.032k ± 0% |
+
+# Benchmark (Postgres 16.0) (Go 1.21) ([vultr.com](https://www.vultr.com/?ref=8741375) VPS Bare Metal 32 GB 6 cores / 12 threads @ 4.0 GHz) ($185/month) Intel(R) Xeon(R) E-2286G CPU @ 4.00GHz
+```bash
+make go-bench
+```
+
+| Name            | ns/op      | B/op    | allocs/op |
+|-----------------|------------|---------|-----------|
+| TxLoopUpdate    | 68_896_024 | 160_135 | 5_005     |
+| TxLoopUpsert    | 67_894_824 | 168_135 | 5_005     |
+| UnnestUpdate    | 9_638_288  | 234_985 | 2_028     |
+| UnnestUpsert    | 9_038_607  | 234_985 | 2_028     |
+| BatchExecUpdate | 17_348_125 | 495_315 | 5_032     |
+| BatchExecUpsert | 17_150_259 | 503_316 | 5_032     |
+
+| name            | time/op      |
+|-----------------|--------------|
+| TxLoopUpdate    | 69.56ms ± 2% |
+| TxLoopUpsert    | 70.65ms ± 4% |
+| UnnestUpdate    | 10.20ms ± 5% |
+| UnnestUpsert    | 10.29ms ± 9% |
+| BatchExecUpdate | 17.81ms ± 1% |
+| BatchExecUpsert | 17.66ms ± 2% |
+
+| name            | B/op         |
+|-----------------|--------------|
+| TxLoopUpdate    | 156.4kB ± 0% |
+| TxLoopUpsert    | 164.2kB ± 0% |
+| UnnestUpdate    | 229.5kB ± 0% |
+| UnnestUpsert    | 229.5kB ± 0% |
+| BatchExecUpdate | 483.7kB ± 0% |
+| BatchExecUpsert | 491.5kB ± 0% |
+
+| name            | allocs/op   |
+|-----------------|-------------|
+| TxLoopUpdate    | 5.005k ± 0% |
+| TxLoopUpsert    | 5.005k ± 0% |
+| UnnestUpdate    | 2.028k ± 0% |
+| UnnestUpsert    | 2.028k ± 0% |
+| BatchExecUpdate | 5.032k ± 0% |
+| BatchExecUpsert | 5.032k ± 0% |
+
+# Benchmark (Postgres 16.0) (Go 1.21) ([vultr.com](https://www.vultr.com/?ref=8741375) VPS Bare Metal 128 GB 8 cores / 16 threads @ 3.2 GHz) ($350/month) Intel(R) Xeon(R) E-2388G CPU @ 3.20GHz
+```bash
+make go-bench
+```
+
+| Name            | ns/op      | B/op    | allocs/op |
+|-----------------|------------|---------|-----------|
+| TxLoopUpdate    | 46_126_147 | 160_135 | 5_005     |
+| TxLoopUpsert    | 45_719_610 | 168_135 | 5_005     |
+| UnnestUpdate    | 5_123_888  | 234_985 | 2_028     |
+| UnnestUpsert    | 5_127_720  | 234_985 | 2_028     |
+| BatchExecUpdate | 11_179_808 | 495_315 | 5_032     |
+| BatchExecUpsert | 11_252_240 | 503_316 | 5_032     |
+
+| name            | time/op      |
+|-----------------|--------------|
+| TxLoopUpdate    | 46.83ms ± 1% |
+| TxLoopUpsert    | 47.21ms ± 2% |
+| UnnestUpdate    | 5.196ms ± 1% |
+| UnnestUpsert    | 5.230ms ± 1% |
+| BatchExecUpdate | 11.21ms ± 0% |
+| BatchExecUpsert | 11.36ms ± 1% |
+
+| name            | B/op         |
+|-----------------|--------------|
+| TxLoopUpdate    | 156.4kB ± 0% |
+| TxLoopUpsert    | 164.2kB ± 0% |
+| UnnestUpdate    | 229.5kB ± 0% |
+| UnnestUpsert    | 229.5kB ± 0% |
+| BatchExecUpdate | 483.7kB ± 0% |
+| BatchExecUpsert | 491.5kB ± 0% |
+
+| name            | allocs/op   |
+|-----------------|-------------|
+| TxLoopUpdate    | 5.005k ± 0% |
+| TxLoopUpsert    | 5.005k ± 0% |
+| UnnestUpdate    | 2.028k ± 0% |
+| UnnestUpsert    | 2.028k ± 0% |
+| BatchExecUpdate | 5.032k ± 0% |
+| BatchExecUpsert | 5.032k ± 0% |
+
+# Benchmark (Postgres 16.0) (Go 1.21) ([vultr.com](https://www.vultr.com/?ref=8741375) VPS Bare Metal 256 GB 24 cores / 48 threads @ 2.9 GHz) ($725/month) AMD EPYC 7443P 24-Core Processor
+```bash
+make go-bench
+```
+
+| Name            | ns/op      | B/op    | allocs/op |
+|-----------------|------------|---------|-----------|
+| TxLoopUpdate    | 50_295_785 | 160_135 | 5_005     |
+| TxLoopUpsert    | 51_178_502 | 168_135 | 5_005     |
+| UnnestUpdate    | 4_817_787  | 234_985 | 2_028     |
+| UnnestUpsert    | 4_876_623  | 234_985 | 2_028     |
+| BatchExecUpdate | 10_703_234 | 495_315 | 5_032     |
+| BatchExecUpsert | 10_770_682 | 503_316 | 5_032     |
+
+| name            | time/op      |
+|-----------------|--------------|
+| TxLoopUpdate    | 52.05ms ± 3% |
+| TxLoopUpsert    | 52.37ms ± 3% |
+| UnnestUpdate    | 5.005ms ± 3% |
+| UnnestUpsert    | 5.024ms ± 9% |
+| BatchExecUpdate | 10.95ms ± 8% |
+| BatchExecUpsert | 11.38ms ± 9% |
+
+| name            | B/op         |
+|-----------------|--------------|
+| TxLoopUpdate    | 156.4kB ± 0% |
+| TxLoopUpsert    | 164.2kB ± 0% |
+| UnnestUpdate    | 229.5kB ± 0% |
+| UnnestUpsert    | 229.5kB ± 0% |
+| BatchExecUpdate | 483.7kB ± 0% |
+| BatchExecUpsert | 491.5kB ± 0% |
+
+| name            | allocs/op   |
+|-----------------|-------------|
+| TxLoopUpdate    | 5.005k ± 0% |
+| TxLoopUpsert    | 5.005k ± 0% |
+| UnnestUpdate    | 2.028k ± 0% |
+| UnnestUpsert    | 2.028k ± 0% |
+| BatchExecUpdate | 5.032k ± 0% |
+| BatchExecUpsert | 5.032k ± 0% |

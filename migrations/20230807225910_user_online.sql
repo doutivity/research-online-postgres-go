@@ -2,7 +2,7 @@
 -- +goose StatementBegin
 CREATE TABLE user_online
 (
-    user_id BIGINT PRIMARY KEY,
+    user_id BIGINT    NOT NULL PRIMARY KEY,
     online  TIMESTAMP NOT NULL
 );
 -- +goose StatementEnd
