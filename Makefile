@@ -35,7 +35,7 @@ go-bench:
 	# benchstat ./output/bench-go-1000x-unnest-upsert.txt
 	# benchstat ./output/bench-go-1000x-unnest-update.txt
 
-	# benchstat ./output/oubench-all.txt
+	# benchstat ./output/bench-all.txt
 
 test:
 	make env-up

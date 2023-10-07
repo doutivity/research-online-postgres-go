@@ -187,7 +187,7 @@ make go-bench
 | BatchExecUpdate | 5.03k ± 0% |
 | BatchExecUpsert | 5.03k ± 0% |
 
-# Benchmark (Postgres 16.0) (PC) (Go 1.21) Intel(R) Core(TM) i7-12700H
+# Benchmark (Postgres 16.0) (Go 1.21) (PC) Intel(R) Core(TM) i7-12700H
 ```bash
 make go-bench
 ```
@@ -209,6 +209,47 @@ make go-bench
 | UnnestUpsert    | 3.998ms ±  2% |
 | BatchExecUpdate | 7.044ms ±  1% |
 | BatchExecUpsert | 7.004ms ±  8% |
+
+| name            | B/op         |
+|-----------------|--------------|
+| TxLoopUpdate    | 156.4kB ± 0% |
+| TxLoopUpsert    | 164.2kB ± 0% |
+| UnnestUpdate    | 229.5kB ± 0% |
+| UnnestUpsert    | 229.5kB ± 0% |
+| BatchExecUpdate | 483.7kB ± 0% |
+| BatchExecUpsert | 491.5kB ± 0% |
+
+| name            | allocs/op   |
+|-----------------|-------------|
+| TxLoopUpdate    | 5.005k ± 0% |
+| TxLoopUpsert    | 5.005k ± 0% |
+| UnnestUpdate    | 2.028k ± 0% |
+| UnnestUpsert    | 2.028k ± 0% |
+| BatchExecUpdate | 5.032k ± 0% |
+| BatchExecUpsert | 5.032k ± 0% |
+
+# Benchmark (Postgres 16.0) (Go 1.21) ([vultr.com](https://www.vultr.com/?ref=8741375) VPS 131072.00 MB 8 cores / 16 threads @ 3.2 GHz) ($350/month) Intel(R) Xeon(R) E-2388G CPU @ 3.20GHz
+```bash
+make go-bench
+```
+
+| Name            | ns/op      | B/op    | allocs/op |
+|-----------------|------------|---------|-----------|
+| TxLoopUpdate    | 46_126_147 | 160_135 | 5_005     |
+| TxLoopUpsert    | 45_719_610 | 168_135 | 5_005     |
+| UnnestUpdate    | 5_123_888  | 234_985 | 2_028     |
+| UnnestUpsert    | 5_127_720  | 234_985 | 2_028     |
+| BatchExecUpdate | 11_179_808 | 495_315 | 5_032     |
+| BatchExecUpsert | 11_252_240 | 503_316 | 5_032     |
+
+| name            | time/op      |
+|-----------------|--------------|
+| TxLoopUpdate    | 46.83ms ± 1% |
+| TxLoopUpsert    | 47.21ms ± 2% |
+| UnnestUpdate    | 5.196ms ± 1% |
+| UnnestUpsert    | 5.230ms ± 1% |
+| BatchExecUpdate | 11.21ms ± 0% |
+| BatchExecUpsert | 11.36ms ± 1% |
 
 | name            | B/op         |
 |-----------------|--------------|
