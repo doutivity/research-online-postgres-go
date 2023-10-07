@@ -70,3 +70,9 @@ migrate-reset:
 	goose -dir ./migrations/ -table schema_migrations postgres $(POSTGRES_URI) reset
 migrate-status:
 	goose -dir ./migrations/ -table schema_migrations postgres $(POSTGRES_URI) status
+
+install-sqlc:
+	go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+
+install-goose:
+	go install github.com/pressly/goose/v3/cmd/goose@latest
