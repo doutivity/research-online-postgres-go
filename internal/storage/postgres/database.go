@@ -40,7 +40,12 @@ func (r *Database) WithTransaction(ctx context.Context, fn func(queries *dbs.Que
 	return withTransaction(ctx, r.pool, r.queries, fn)
 }
 
-func withTransaction(ctx context.Context, db *pgxpool.Pool, queries *dbs.Queries, fn func(queries *dbs.Queries) error) (err error) {
+func withTransaction(
+	ctx context.Context,
+	db *pgxpool.Pool,
+	queries *dbs.Queries,
+	fn func(queries *dbs.Queries) error,
+) (err error) {
 	tx, err := db.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
 		return

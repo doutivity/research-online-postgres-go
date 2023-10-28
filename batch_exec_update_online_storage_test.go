@@ -11,7 +11,6 @@ import (
 )
 
 func TestBatchExecUpdateOnlineStorage(t *testing.T) {
-	t.Helper()
 	if testing.Short() {
 		t.Skip()
 	}
@@ -28,7 +27,6 @@ func TestBatchExecUpdateOnlineStorage(t *testing.T) {
 }
 
 func BenchmarkBatchExecUpdateOnlineStorage(b *testing.B) {
-	b.Helper()
 	if testing.Short() {
 		b.Skip()
 	}

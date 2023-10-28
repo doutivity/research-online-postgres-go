@@ -11,7 +11,6 @@ import (
 )
 
 func TestTxLoopUpdateOnlineStorage(t *testing.T) {
-	t.Helper()
 	if testing.Short() {
 		t.Skip()
 	}
@@ -28,7 +27,6 @@ func TestTxLoopUpdateOnlineStorage(t *testing.T) {
 }
 
 func BenchmarkTxLoopUpdateOnlineStorage(b *testing.B) {
-	b.Helper()
 	if testing.Short() {
 		b.Skip()
 	}

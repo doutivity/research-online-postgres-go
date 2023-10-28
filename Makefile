@@ -39,6 +39,7 @@ go-bench:
 
 test:
 	make env-up
+	sleep 15s # wait Postgres launch
 	make docker-go-version
 	make docker-pg-version
 	make migrate-up

@@ -11,7 +11,6 @@ import (
 )
 
 func TestUnnestUpsertOnlineStorage(t *testing.T) {
-	t.Helper()
 	if testing.Short() {
 		t.Skip()
 	}
@@ -28,7 +27,6 @@ func TestUnnestUpsertOnlineStorage(t *testing.T) {
 }
 
 func BenchmarkUnnestUpsertOnlineStorage(b *testing.B) {
-	b.Helper()
 	if testing.Short() {
 		b.Skip()
 	}

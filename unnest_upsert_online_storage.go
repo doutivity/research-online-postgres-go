@@ -18,7 +18,7 @@ func NewUnnestUpsertOnlineStorage(db *postgres.Database) *UnnestUpsertOnlineStor
 func (s *UnnestUpsertOnlineStorage) BatchStore(ctx context.Context, pairs []UserOnlinePair) error {
 	userIDs, timestamps := userOnlinePairsToPgxSlices(pairs)
 
-	return s.db.Queries().UserOnlineUnnestUpdate(ctx, dbs.UserOnlineUnnestUpdateParams{
+	return s.db.Queries().UserOnlineUnnestUpsert(ctx, dbs.UserOnlineUnnestUpsertParams{
 		UserIds: userIDs,
 		Onlines: timestamps,
 	})

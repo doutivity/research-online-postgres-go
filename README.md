@@ -156,7 +156,7 @@ make go-bench
 | TxLoopUpdate    | 63_966_207 | 168_056 | 5_003     |
 | TxLoopUpsert    | 69_837_876 | 168_056 | 5_003     |
 | UnnestUpdate    | 7_950_833  | 234_930 | 2_027     |
-| UnnestUpsert    | 7_997_338  | 234_930 | 2_027     |
+| UnnestUpsert    |            | 234_930 | 2_027     |
 | BatchExecUpdate | 18_686_485 | 495_235 | 5_030     |
 | BatchExecUpsert | 19_463_064 | 503_235 | 5_030     |
 
@@ -165,7 +165,7 @@ make go-bench
 | TxLoopUpdate    | 71.1ms ±12% |
 | TxLoopUpsert    | 73.2ms ± 8% |
 | UnnestUpdate    | 8.41ms ± 5% |
-| UnnestUpsert    | 8.27ms ± 3% |
+| UnnestUpsert    |             |
 | BatchExecUpdate | 20.2ms ±10% |
 | BatchExecUpsert | 20.3ms ±10% |
 
@@ -197,7 +197,7 @@ make go-bench
 | TxLoopUpdate    | 19_786_396 | 160_135 | 5_005     |
 | TxLoopUpsert    | 20_168_659 | 168_135 | 5_005     |
 | UnnestUpdate    | 3_935_782  | 234_985 | 2_028     |
-| UnnestUpsert    | 3_902_771  | 234_985 | 2_028     |
+| UnnestUpsert    |            | 234_985 | 2_028     |
 | BatchExecUpdate | 6_984_122  | 495_315 | 5_032     |
 | BatchExecUpsert | 6_630_488  | 503_316 | 5_032     |
 
@@ -206,7 +206,7 @@ make go-bench
 | TxLoopUpdate    | 20.45ms ±  2% |
 | TxLoopUpsert    | 26.59ms ± 24% |
 | UnnestUpdate    | 3.997ms ±  1% |
-| UnnestUpsert    | 3.998ms ±  2% |
+| UnnestUpsert    |               |
 | BatchExecUpdate | 7.044ms ±  1% |
 | BatchExecUpsert | 7.004ms ±  8% |
 
@@ -238,7 +238,7 @@ make go-bench
 | TxLoopUpdate    | 68_896_024 | 160_135 | 5_005     |
 | TxLoopUpsert    | 67_894_824 | 168_135 | 5_005     |
 | UnnestUpdate    | 9_638_288  | 234_985 | 2_028     |
-| UnnestUpsert    | 9_038_607  | 234_985 | 2_028     |
+| UnnestUpsert    |            | 234_985 | 2_028     |
 | BatchExecUpdate | 17_348_125 | 495_315 | 5_032     |
 | BatchExecUpsert | 17_150_259 | 503_316 | 5_032     |
 
@@ -247,7 +247,7 @@ make go-bench
 | TxLoopUpdate    | 69.56ms ± 2% |
 | TxLoopUpsert    | 70.65ms ± 4% |
 | UnnestUpdate    | 10.20ms ± 5% |
-| UnnestUpsert    | 10.29ms ± 9% |
+| UnnestUpsert    |              |
 | BatchExecUpdate | 17.81ms ± 1% |
 | BatchExecUpsert | 17.66ms ± 2% |
 
@@ -279,7 +279,7 @@ make go-bench
 | TxLoopUpdate    | 46_126_147 | 160_135 | 5_005     |
 | TxLoopUpsert    | 45_719_610 | 168_135 | 5_005     |
 | UnnestUpdate    | 5_123_888  | 234_985 | 2_028     |
-| UnnestUpsert    | 5_127_720  | 234_985 | 2_028     |
+| UnnestUpsert    |            | 234_985 | 2_028     |
 | BatchExecUpdate | 11_179_808 | 495_315 | 5_032     |
 | BatchExecUpsert | 11_252_240 | 503_316 | 5_032     |
 
@@ -288,7 +288,7 @@ make go-bench
 | TxLoopUpdate    | 46.83ms ± 1% |
 | TxLoopUpsert    | 47.21ms ± 2% |
 | UnnestUpdate    | 5.196ms ± 1% |
-| UnnestUpsert    | 5.230ms ± 1% |
+| UnnestUpsert    |              |
 | BatchExecUpdate | 11.21ms ± 0% |
 | BatchExecUpsert | 11.36ms ± 1% |
 
@@ -320,7 +320,7 @@ make go-bench
 | TxLoopUpdate    | 50_295_785 | 160_135 | 5_005     |
 | TxLoopUpsert    | 51_178_502 | 168_135 | 5_005     |
 | UnnestUpdate    | 4_817_787  | 234_985 | 2_028     |
-| UnnestUpsert    | 4_876_623  | 234_985 | 2_028     |
+| UnnestUpsert    |            | 234_985 | 2_028     |
 | BatchExecUpdate | 10_703_234 | 495_315 | 5_032     |
 | BatchExecUpsert | 10_770_682 | 503_316 | 5_032     |
 
@@ -329,7 +329,7 @@ make go-bench
 | TxLoopUpdate    | 52.05ms ± 3% |
 | TxLoopUpsert    | 52.37ms ± 3% |
 | UnnestUpdate    | 5.005ms ± 3% |
-| UnnestUpsert    | 5.024ms ± 9% |
+| UnnestUpsert    |              |
 | BatchExecUpdate | 10.95ms ± 8% |
 | BatchExecUpsert | 11.38ms ± 9% |
 
