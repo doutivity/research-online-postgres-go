@@ -196,8 +196,8 @@ make go-bench
 |-----------------|------------|---------|-----------|
 | TxLoopUpdate    | 19_786_396 | 160_135 | 5_005     |
 | TxLoopUpsert    | 20_168_659 | 168_135 | 5_005     |
-| UnnestUpdate    | 3_935_782  | 234_985 | 2_028     |
-| UnnestUpsert    |            | 234_985 | 2_028     |
+| UnnestUpdate    | 3_528_682  | 234_985 | 2_028     |
+| UnnestUpsert    | 4_129_712  | 234_985 | 2_028     |
 | BatchExecUpdate | 6_984_122  | 495_315 | 5_032     |
 | BatchExecUpsert | 6_630_488  | 503_316 | 5_032     |
 
@@ -205,8 +205,8 @@ make go-bench
 |-----------------|---------------|
 | TxLoopUpdate    | 20.45ms ±  2% |
 | TxLoopUpsert    | 26.59ms ± 24% |
-| UnnestUpdate    | 3.997ms ±  1% |
-| UnnestUpsert    |               |
+| UnnestUpdate    | 3.785m ± 4%   |
+| UnnestUpsert    | 4.235m ± 6%   |
 | BatchExecUpdate | 7.044ms ±  1% |
 | BatchExecUpsert | 7.004ms ±  8% |
 
