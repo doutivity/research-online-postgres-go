@@ -1,6 +1,7 @@
 # Efficiently store online with PostgreSQL and Go
 - [Збереження стану онлайну користувача в Redis](https://dou.ua/forums/topic/35260/)
 - [Hash, Set чи Sorted set. Який тип даних вибрати для збереження стану онлайну користувача в Redis?](https://dou.ua/forums/topic/44655/)
+- [Batch UPDATE в PostgreSQL](https://dou.ua/forums/topic/35261/)
 
 # Support Ukraine 🇺🇦
 - Help Ukraine via [SaveLife fund](https://savelife.in.ua/en/donate-en/)
